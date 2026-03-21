@@ -1,6 +1,5 @@
 package com.minegun.demo;
 
-import com.minegun.Rifle;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.adventure.bossbar.BossBarManager;
@@ -25,6 +24,6 @@ public class HealthManagement {
         });
     }
     public void damage(Player player, double hitDamage) {
-        healthBar.progress((float)(healthBar.progress() - hitDamage));
+        healthBar.progress((float) (healthBar.progress() - hitDamage));
     }
 }
