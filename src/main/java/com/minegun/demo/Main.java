@@ -1,6 +1,6 @@
 package com.minegun.demo;
 
-import com.minegun.src.Rifle;
+import com.minegun.Rifle;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
