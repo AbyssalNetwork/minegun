@@ -25,6 +25,8 @@ public class Main {
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
 
+        Rifle.register(eventHandler, instanceContainer);
+
         eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setSpawningInstance(instanceContainer);
             event.getPlayer().setPermissionLevel(4);
