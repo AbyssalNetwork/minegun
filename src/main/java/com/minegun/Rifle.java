@@ -78,6 +78,7 @@ public class Rifle {
                     hit.heal();
                     HealthManagement healthManagement = new HealthManagement();
                     healthManagement.damage(hit, 25);
+                    healthManagement.setKilledBy(hit, player);
 
                     MinecraftServer.getSchedulerManager()
                             .buildTask(() -> {
