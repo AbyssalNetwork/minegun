@@ -78,7 +78,12 @@ public class Rifle {
                     hit.heal();
                     HealthManagement healthManagement = new HealthManagement();
                     healthManagement.damage(hit, 25);
-                    healthManagement.setKilledBy(hit, player);
+                    if (healthManagement.getHealth(hit) <= 0) {
+                        minegunLogger.info("Set Killed By Started!");
+                        healthManagement.setKilledBy(hit, player);
+                        minegunLogger.success("Set Killed By Set");
+                        minegunLogger.info(healthManagement.getKilledBy(hit).getUsername());
+                    }
 
                     MinecraftServer.getSchedulerManager()
                             .buildTask(() -> {

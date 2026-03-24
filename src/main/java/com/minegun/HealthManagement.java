@@ -106,7 +106,6 @@ public class HealthManagement {
                                 Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
                         )
                 );
-                minegunLogger.info(player.getUsername() + " has been killed by " + getKilledBy(player).getUsername());
                 player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
                 health = 100;
                 shield = 100;
@@ -138,4 +137,5 @@ public class HealthManagement {
     public void setKilledBy(Player killed, Player killer) {
         killedBy.put(killed.getUuid(), killer);
     }
+
 }
