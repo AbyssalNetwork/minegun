@@ -79,10 +79,11 @@ public class Rifle {
                     HealthManagement healthManagement = new HealthManagement();
                     healthManagement.damage(hit, 25);
                     if (healthManagement.getHealth(hit) <= 0) {
-                        minegunLogger.info("Set Killed By Started!");
                         healthManagement.setKilledBy(hit, player);
-                        minegunLogger.success("Set Killed By Set");
-                        minegunLogger.info(healthManagement.getKilledBy(hit).getUsername());
+                        minegunLogger.info(hit.getUsername()  + " was killed by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
+                        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
+                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
+                        });
                     }
 
                     MinecraftServer.getSchedulerManager()
