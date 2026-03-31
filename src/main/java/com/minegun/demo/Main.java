@@ -35,6 +35,8 @@ public class Main {
         Rifle.register(eventHandler, instanceContainer);
         minegunLogger.info("Rifle event loaded!");
 
+        MinecraftServer.getCommandManager().register(new giveCommand());
+        minegunLogger.info("Give Command registered!");
 
         eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setSpawningInstance(instanceContainer);
