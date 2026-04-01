@@ -8,6 +8,11 @@ java {
     }
 }
 
+tasks.register<JavaExec>("run") {
+  classpath = sourceSets["main"].runtimeClasspath
+  mainClass.set("com.minegun.demo.Main")
+}
+
 group = "com.minegun"
 version = "1.0-SNAPSHOT"
 

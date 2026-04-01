@@ -15,7 +15,8 @@ public class giveCommand extends Command{
     public giveCommand() {
         super("give");
 
-        var item = ArgumentType.String("item-given");
+        var item = ArgumentType.Word("item-given")
+          .from("RocketLauncher", "Rifle"); // Auto Fill
 
         addSyntax((sender, context) -> {
             if (sender instanceof Player) {
