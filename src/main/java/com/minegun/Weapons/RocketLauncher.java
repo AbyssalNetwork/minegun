@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class RocketLauncher {
+public class RocketLauncher implements RaycastWeapons {
     public static void givePlayer(Player player){
         ItemStack item = ItemStack.builder(Material.WOODEN_AXE)
                 .set(DataComponents.CUSTOM_NAME, Component.text("Rocket Launcher", NamedTextColor.YELLOW))
@@ -60,7 +60,7 @@ public class RocketLauncher {
                         Math.floor(point.z())
                 );
 
-                Player hit = weapons.isPlayerAtPosition(instanceContainer, exactPos, player);
+                Player hit = RaycastWeapons.isPlayerAtPosition(instanceContainer, exactPos, player);
 
                 if (instanceContainer.getBlock(blockPos) != Block.AIR) {
                     instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 10);

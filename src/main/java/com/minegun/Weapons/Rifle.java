@@ -27,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minegun.Weapons.weapons.isPlayerAtPosition;
-
-public class Rifle {
+public class Rifle implements RaycastWeapons, HealthManagement {
     public static void givePlayer(Player player) {
         ItemStack item = ItemStack.builder(Material.WOODEN_HOE)
                 .set(DataComponents.CUSTOM_NAME, Component.text("Rifle", NamedTextColor.YELLOW))
@@ -64,7 +62,7 @@ public class Rifle {
                         Math.floor(point.z())
                 );
 
-                Player hit = isPlayerAtPosition(instanceContainer, exactPos, player);
+                Player hit = RaycastWeapons.isPlayerAtPosition(instanceContainer, exactPos, player);
 
                 if (instanceContainer.getBlock(blockPos) != Block.AIR) {
                     break;
@@ -79,13 +77,12 @@ public class Rifle {
                     );
                     hit.damage(DamageType.ARROW, 12f);
                     hit.heal();
-                    HealthManagement healthManagement = new HealthManagement();
-                    healthManagement.damage(hit, 25);
-                    if (healthManagement.getHealth(hit) <= 0) {
-                        healthManagement.setKilledBy(hit, player);
-                        minegunLogger.info(hit.getUsername()  + " was killed by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
+                    HealthManagement.damage(hit, 25);
+                    if (HealthManagement.getHealth(hit) <= 0) {
+                        HealthManagement.setKilledBy(hit, player);
+                        minegunLogger.info(hit.getUsername()  + " was killed by " + HealthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
                         MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
-                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
+                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + HealthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
                         });
                     }
 
