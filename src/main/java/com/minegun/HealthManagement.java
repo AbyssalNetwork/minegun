@@ -23,6 +23,10 @@ public class HealthManagement {
     HashMap<UUID, BossBar> healthBars = new HashMap<>();
     HashMap<UUID, BossBar> shieldBars = new HashMap<>();
 
+    HashMap<UUID, Player> killedBy = new HashMap<>();
+
+    HashMap<UUID, Boolean> isLoaded = new HashMap<>();
+
     Tag<Double> healthTag = Tag.Double("health");
     Tag<Double> shieldTag = Tag.Double("shield");
 
@@ -54,7 +58,9 @@ public class HealthManagement {
 
             event.getPlayer().setTag(healthTag, 100.0);
             event.getPlayer().setTag(shieldTag, 100.0);
-      });
+
+            isLoaded.put(event.getPlayer().getUuid(), true);
+        });
     }
     public void damage(Player player, double hitDamage) {
         double shield = getShield(player);
@@ -71,36 +77,48 @@ public class HealthManagement {
             shield -= hitDamage;
         }
 
-        if (health <= 0) {
-            player.teleport(player.getRespawnPoint());
-            player.showTitle(
-                    Title.title(
-                            Component.text("You DIED").color(NamedTextColor.RED),
-                            Component.text(""),
-                            Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
-                    )
-            );
-            minegunLogger.info(player.getUsername() + " has been killed");
-            player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
-            health = 100;
-            shield = 100;
-        }
-
         player.setTag(healthTag, health);
         player.setTag(shieldTag, shield);
     }
 
     public void tickUpdate(GlobalEventHandler eventHandler) {
         eventHandler.addListener(PlayerTickEvent.class, event -> {
-           BossBar playerHealthBar = healthBars.get(event.getPlayer().getUuid());
-           BossBar playerShieldBar = shieldBars.get(event.getPlayer().getUuid());
+            if (isLoaded.get(event.getPlayer().getUuid()) == null) {
+                return;
+            }
+            if (!isLoaded.get(event.getPlayer().getUuid())) {
+                return;
+            }
+            BossBar playerHealthBar = healthBars.get(event.getPlayer().getUuid());
+            BossBar playerShieldBar = shieldBars.get(event.getPlayer().getUuid());
 
-           if (playerHealthBar == null) {
-               return;
-           }
+            Player player = event.getPlayer();
 
-           playerHealthBar.progress((float) (event.getPlayer().getTag(healthTag) / 100));
-           playerShieldBar.progress((float) (event.getPlayer().getTag(shieldTag) / 100));
+            double shield;
+            double health = getHealth(player);
+
+            if (health <= 0) {
+                player.teleport(player.getRespawnPoint());
+                player.showTitle(
+                        Title.title(
+                                Component.text("You DIED").color(NamedTextColor.RED),
+                                Component.text(""),
+                                Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
+                        )
+                );
+                player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
+                health = 100;
+                shield = 100;
+                player.setTag(healthTag, health);
+                player.setTag(shieldTag, shield);
+            }
+
+            if (playerHealthBar == null) {
+                return;
+            }
+
+            playerHealthBar.progress((float) (event.getPlayer().getTag(healthTag) / 100));
+            playerShieldBar.progress((float) (event.getPlayer().getTag(shieldTag) / 100));
         });
     }
 
@@ -111,4 +129,13 @@ public class HealthManagement {
     public double getShield(Player player) {
         return player.getTag(shieldTag);
     }
+
+    public Player getKilledBy(Player player) {
+        return killedBy.get(player.getUuid());
+    }
+
+    public void setKilledBy(Player killed, Player killer) {
+        killedBy.put(killed.getUuid(), killer);
+    }
+
 }

@@ -78,6 +78,13 @@ public class Rifle {
                     hit.heal();
                     HealthManagement healthManagement = new HealthManagement();
                     healthManagement.damage(hit, 25);
+                    if (healthManagement.getHealth(hit) <= 0) {
+                        healthManagement.setKilledBy(hit, player);
+                        minegunLogger.info(hit.getUsername()  + " was killed by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
+                        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
+                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
+                        });
+                    }
 
                     MinecraftServer.getSchedulerManager()
                             .buildTask(() -> {

@@ -35,11 +35,13 @@ public class Main {
         Rifle.register(eventHandler, instanceContainer);
         minegunLogger.info("Rifle event loaded!");
 
+        MinecraftServer.getCommandManager().register(new giveCommand());
+        minegunLogger.info("Give Command registered!");
 
         eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setSpawningInstance(instanceContainer);
             event.getPlayer().setPermissionLevel(4);
-            System.out.println(event.getPlayer().getPermissionLevel());
+            minegunLogger.info(event.getPlayer().getUsername() + " has permission level " + event.getPlayer().getPermissionLevel() + "!");
             event.getPlayer().setRespawnPoint(new Pos(0,42, 0));
             Rifle.givePlayer(event.getPlayer());
         });
