@@ -60,6 +60,9 @@ public class Main {
         });
         minegunLogger.info("F3 + F4 Registered");
 
+        TestDummy.createDummy(instanceContainer);
+        minegunLogger.info("Dummy made!");
+
         //Health Stuff
 
         PlayerLoadedEventHandler.register(eventHandler);
@@ -69,7 +72,5 @@ public class Main {
 
         minecraftServer.start("0.0.0.0", 25565);
         minegunLogger.success("Minegun Demo Started!");
-
-        TestDummy.createDummy(instanceContainer); // Should spawn in a Zombie...
     }
 }
