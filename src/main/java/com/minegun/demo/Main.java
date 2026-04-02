@@ -1,7 +1,8 @@
 package com.minegun.demo;
 
 import com.minegun.HealthManagement;
-import com.minegun.Rifle;
+import com.minegun.Weapons.Rifle;
+import com.minegun.Weapons.RocketLauncher;
 import com.minegun.minegunLogger;
 import com.minegun.demo.TestDummy;
 import net.minestom.server.Auth;
@@ -35,6 +36,8 @@ public class Main {
 
         Rifle.register(eventHandler, instanceContainer);
         minegunLogger.info("Rifle event loaded!");
+
+        RocketLauncher.register(eventHandler, instanceContainer);
 
         MinecraftServer.getCommandManager().register(new giveCommand());
         minegunLogger.info("Give Command registered!");

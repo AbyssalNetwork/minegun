@@ -1,15 +1,14 @@
-package com.minegun;
+package com.minegun.Weapons;
 
+import com.minegun.minegunLogger;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerUseItemEvent;
-import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
@@ -26,14 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class Rifle {
-    public static void givePlayer(Player player) {
-        ItemStack item = ItemStack.builder(Material.WOODEN_HOE)
-                .set(DataComponents.CUSTOM_NAME, Component.text("Rifle", NamedTextColor.YELLOW))
+public class RocketLauncher {
+    public static void givePlayer(Player player){
+        ItemStack item = ItemStack.builder(Material.WOODEN_AXE)
+                .set(DataComponents.CUSTOM_NAME, Component.text("Rocket Launcher", NamedTextColor.YELLOW))
                 .set(DataComponents.LORE, List.of(Component.text("Custom Made Weapon"), Component.text("By: VardinsDev")))
                 .build();
         player.setItemInHand(PlayerHand.MAIN, item);
-        minegunLogger.success(player.getUsername() + " has been given a Rifle!");
+        minegunLogger.success(player.getUsername() + " has been given a Rocket Launcher!");
     }
     private static final long cooldownMs = 25L;
     private static final HashMap<UUID, Long> lastShotTime = new HashMap<>();
@@ -41,7 +40,7 @@ public class Rifle {
     public static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
             Player player = event.getPlayer();
-            if (player.getItemInMainHand().material() != Material.WOODEN_HOE) return;
+            if (player.getItemInMainHand().material() != Material.WOODEN_AXE) return;
 
             long now = System.currentTimeMillis();
             long last = lastShotTime.getOrDefault(player.getUuid(), 0L);
@@ -61,9 +60,10 @@ public class Rifle {
                         Math.floor(point.z())
                 );
 
-                Player hit = isPlayerAtPosition(instanceContainer, exactPos, player);
+                Player hit = weapons.isPlayerAtPosition(instanceContainer, exactPos, player);
 
                 if (instanceContainer.getBlock(blockPos) != Block.AIR) {
+                    instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 10);
                     break;
                 } else if (hit != player) {
                     hit.playSound(
@@ -74,17 +74,7 @@ public class Rifle {
                                     1f
                             )
                     );
-                    hit.damage(DamageType.ARROW, 12f);
-                    hit.heal();
-                    HealthManagement healthManagement = new HealthManagement();
-                    healthManagement.damage(hit, 25);
-                    if (healthManagement.getHealth(hit) <= 0) {
-                        healthManagement.setKilledBy(hit, player);
-                        minegunLogger.info(hit.getUsername()  + " was killed by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
-                        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
-                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
-                        });
-                    }
+                    //Hit event
 
                     MinecraftServer.getSchedulerManager()
                             .buildTask(() -> {
@@ -112,7 +102,7 @@ public class Rifle {
                 } else {
                     if (player.getInstance() != null) {
                         player.getInstance().sendGroupedPacket(
-                                new ParticlePacket(Particle.CRIT, point.x(), point.y(), point.z(), 0f, 0f, 0f, 0f, 1)
+                                new ParticlePacket(Particle.FLAME, point.x(), point.y(), point.z(), 0f, 0f, 0f, 0f, 1)
                         );
                     }
                 }
@@ -124,20 +114,5 @@ public class Rifle {
                     Sound.sound(SoundEvent.ENTITY_FIREWORK_ROCKET_BLAST, Sound.Source.PLAYER, 0.25f, 1f)
             );
         });
-    }
-
-    public static Player isPlayerAtPosition(Instance instance, Pos targetPos, Player shooter) {
-        for (Player player : instance.getPlayers()) {
-            if (player == shooter) continue;
-            Pos feetPos = player.getPosition();
-            double height = player.isSneaking() ? 1.5 : 1.8;
-            double y = 0.0;
-            while (y <= height) {
-                Pos checkPos = feetPos.add(0.0, y, 0.0);
-                if (targetPos.distanceSquared(checkPos) <= 0.5 * 0.5) return player;
-                y += 0.3;
-            }
-        }
-        return shooter;
     }
 }
