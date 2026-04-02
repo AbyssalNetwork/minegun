@@ -3,6 +3,7 @@ package com.minegun.demo;
 import com.minegun.HealthManagement;
 import com.minegun.Rifle;
 import com.minegun.minegunLogger;
+import com.minegun.demo.TestDummy;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -63,5 +64,7 @@ public class Main {
 
         minecraftServer.start("0.0.0.0", 25565);
         minegunLogger.success("Minegun Demo Started!");
+
+        TestDummy.createDummy(instanceContainer); // Should spawn in a Zombie...
     }
 }
