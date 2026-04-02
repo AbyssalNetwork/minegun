@@ -19,13 +19,15 @@ public class giveCommand extends Command{
           .from("RocketLauncher", "Rifle"); // Auto Fill
 
         addSyntax((sender, context) -> {
-            if (sender instanceof Player) {
+            if (sender instanceof Player p) {
+              if (p.getPermissionLevel() >= 2) {
                 if (context.get(item).equalsIgnoreCase("rocketLauncher")) {
-                    RocketLauncher.givePlayer((Player) sender);
+                    RocketLauncher.givePlayer(p);
                 }
                 if (context.get(item).equalsIgnoreCase("Rifle")) {
-                    Rifle.givePlayer((Player) sender);
+                    Rifle.givePlayer(p);
                 }
+              }
             } else {
                 minegunLogger.error("Console tried to give itself a rocket launcher!");
             }
