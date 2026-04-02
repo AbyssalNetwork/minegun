@@ -24,7 +24,7 @@ public class giveCommand extends Command{
                 if (context.get(item).equalsIgnoreCase("rocketLauncher")) {
                     RocketLauncher.givePlayer(p);
                 }
-                if (context.get(item).equalsIgnoreCase("Rifle")) {
+                if (context.get(item).equalsIgnoreCase("rifle")) {
                     Rifle.givePlayer(p);
                 }
               }
