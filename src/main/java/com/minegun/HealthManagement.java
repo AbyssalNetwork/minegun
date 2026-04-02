@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.adventure.bossbar.BossBarManager;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.Event;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoadedEvent;
 import net.minestom.server.event.player.PlayerTickEvent;
@@ -17,7 +18,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class HealthManagement {
+public interface HealthManagement {
     BossBarManager bossBarManager = new BossBarManager();
 
     HashMap<UUID, BossBar> healthBars = new HashMap<>();
@@ -30,39 +31,35 @@ public class HealthManagement {
     Tag<Double> healthTag = Tag.Double("health");
     Tag<Double> shieldTag = Tag.Double("shield");
 
-    BossBar healthBar;
-    BossBar shieldBar;
+    static void bossBarMaker(Player player) {
+        BossBar healthBar;
+        BossBar shieldBar;
+        healthBar = BossBar.bossBar(
+                Component.text("Health"),
+                1f,
+                BossBar.Color.GREEN,
+                BossBar.Overlay.PROGRESS
+        );
 
-    public void bossBarMaker(GlobalEventHandler eventHandler) {
-        eventHandler.addListener(PlayerLoadedEvent.class, event -> {
+        shieldBar = BossBar.bossBar(
+                Component.text("Shield"),
+                1f,
+                BossBar.Color.BLUE,
+                BossBar.Overlay.PROGRESS
+        );
 
-            healthBar = BossBar.bossBar(
-                    Component.text("Health"),
-                    1f,
-                    BossBar.Color.GREEN,
-                    BossBar.Overlay.PROGRESS
-            );
+        bossBarManager.addBossBar(player, healthBar);
+        bossBarManager.addBossBar(player, shieldBar);
 
-            shieldBar = BossBar.bossBar(
-                    Component.text("Shield"),
-                    1f,
-                    BossBar.Color.BLUE,
-                    BossBar.Overlay.PROGRESS
-            );
+        healthBars.put(player.getUuid(), healthBar);
+        shieldBars.put(player.getUuid(), shieldBar);
 
-            bossBarManager.addBossBar(event.getPlayer(), healthBar);
-            bossBarManager.addBossBar(event.getPlayer(), shieldBar);
+        player.setTag(healthTag, 100.0);
+        player.setTag(shieldTag, 100.0);
 
-            healthBars.put(event.getPlayer().getUuid(), healthBar);
-            shieldBars.put(event.getPlayer().getUuid(), shieldBar);
-
-            event.getPlayer().setTag(healthTag, 100.0);
-            event.getPlayer().setTag(shieldTag, 100.0);
-
-            isLoaded.put(event.getPlayer().getUuid(), true);
-        });
+        isLoaded.put(player.getUuid(), true);
     }
-    public void damage(Player player, double hitDamage) {
+    static void damage(Player player, double hitDamage) {
         double shield = getShield(player);
         double health = getHealth(player);
         double overShield;
@@ -81,60 +78,56 @@ public class HealthManagement {
         player.setTag(shieldTag, shield);
     }
 
-    public void tickUpdate(GlobalEventHandler eventHandler) {
-        eventHandler.addListener(PlayerTickEvent.class, event -> {
-            if (isLoaded.get(event.getPlayer().getUuid()) == null) {
-                return;
-            }
-            if (!isLoaded.get(event.getPlayer().getUuid())) {
-                return;
-            }
-            BossBar playerHealthBar = healthBars.get(event.getPlayer().getUuid());
-            BossBar playerShieldBar = shieldBars.get(event.getPlayer().getUuid());
+    static void tickUpdate(Player player) {
+        if (isLoaded.get(player.getUuid()) == null) {
+            return;
+        }
+        if (!isLoaded.get(player.getUuid())) {
+            return;
+        }
+        BossBar playerHealthBar = healthBars.get(player.getUuid());
+        BossBar playerShieldBar = shieldBars.get(player.getUuid());
 
-            Player player = event.getPlayer();
+        double shield;
+        double health = getHealth(player);
 
-            double shield;
-            double health = getHealth(player);
+        if (health <= 0) {
+            player.teleport(player.getRespawnPoint());
+            player.showTitle(
+                    Title.title(
+                            Component.text("You DIED").color(NamedTextColor.RED),
+                            Component.text(""),
+                            Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
+                    )
+            );
+            player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
+            health = 100;
+            shield = 100;
+            player.setTag(healthTag, health);
+            player.setTag(shieldTag, shield);
+        }
 
-            if (health <= 0) {
-                player.teleport(player.getRespawnPoint());
-                player.showTitle(
-                        Title.title(
-                                Component.text("You DIED").color(NamedTextColor.RED),
-                                Component.text(""),
-                                Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
-                        )
-                );
-                player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
-                health = 100;
-                shield = 100;
-                player.setTag(healthTag, health);
-                player.setTag(shieldTag, shield);
-            }
+        if (playerHealthBar == null) {
+            return;
+        }
 
-            if (playerHealthBar == null) {
-                return;
-            }
-
-            playerHealthBar.progress((float) (event.getPlayer().getTag(healthTag) / 100));
-            playerShieldBar.progress((float) (event.getPlayer().getTag(shieldTag) / 100));
-        });
+        playerHealthBar.progress((float) (player.getTag(healthTag) / 100));
+        playerShieldBar.progress((float) (player.getTag(shieldTag) / 100));
     }
 
-    public double getHealth(Player player) {
+    static double getHealth(Player player) {
         return player.getTag(healthTag);
     }
 
-    public double getShield(Player player) {
+    static double getShield(Player player) {
         return player.getTag(shieldTag);
     }
 
-    public Player getKilledBy(Player player) {
+    static Player getKilledBy(Player player) {
         return killedBy.get(player.getUuid());
     }
 
-    public void setKilledBy(Player killed, Player killer) {
+    static void setKilledBy(Player killed, Player killer) {
         killedBy.put(killed.getUuid(), killer);
     }
 

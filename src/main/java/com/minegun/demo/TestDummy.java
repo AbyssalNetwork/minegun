@@ -7,7 +7,6 @@ import net.minestom.server.instance.InstanceContainer;
 
 public class TestDummy {
     public static void createDummy(InstanceContainer instanceContainer) {
-        System.out.println("Confirmacion.");
         EntityCreature zombie = new EntityCreature(EntityType.ZOMBIE);
         Pos spawnPos = new Pos(1, 42, 1);
         zombie.setInstance(instanceContainer, spawnPos);

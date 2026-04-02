@@ -27,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minegun.Weapons.weapons.isPlayerAtPosition;
-
-public class Rifle {
+public class Rifle implements RaycastWeapons, HealthManagement {
     public static void givePlayer(Player player) {
         ItemStack item = ItemStack.builder(Material.WOODEN_HOE)
                 .set(DataComponents.CUSTOM_NAME, Component.text("Rifle", NamedTextColor.YELLOW))
@@ -43,89 +41,20 @@ public class Rifle {
 
     public static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
-            Player player = event.getPlayer();
-            if (player.getItemInMainHand().material() != Material.WOODEN_HOE) return;
-
-            long now = System.currentTimeMillis();
-            long last = lastShotTime.getOrDefault(player.getUuid(), 0L);
-            if (now - last < cooldownMs) return;
-            lastShotTime.put(player.getUuid(), now);
-
-            Pos eyePos = player.getPosition().add(0.0, player.getEyeHeight(), 0.0);
-            Vec direction = player.getPosition().direction();
-
-            double i = 1.0;
-            while (i <= 100) {
-                Vec point = eyePos.asVec().add(direction.mul(i));
-                Pos exactPos = point.asPos();
-                Pos blockPos = new Pos(
-                        Math.floor(point.x()),
-                        Math.floor(point.y()),
-                        Math.floor(point.z())
-                );
-
-                Player hit = isPlayerAtPosition(instanceContainer, exactPos, player);
-
-                if (instanceContainer.getBlock(blockPos) != Block.AIR) {
-                    break;
-                } else if (hit != player) {
-                    hit.playSound(
-                            Sound.sound(
-                                    SoundEvent.ENTITY_FIREWORK_ROCKET_BLAST,
-                                    Sound.Source.PLAYER,
-                                    0.25f,
-                                    1f
-                            )
-                    );
-                    hit.damage(DamageType.ARROW, 12f);
-                    hit.heal();
-                    HealthManagement healthManagement = new HealthManagement();
-                    healthManagement.damage(hit, 25);
-                    if (healthManagement.getHealth(hit) <= 0) {
-                        healthManagement.setKilledBy(hit, player);
-                        minegunLogger.info(hit.getUsername()  + " was killed by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!");
-                        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
-                            person.sendMessage(Component.text(hit.getUsername() + " has been shot by " + healthManagement.getKilledBy(hit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
-                        });
-                    }
-
-                    MinecraftServer.getSchedulerManager()
-                            .buildTask(() -> {
-                                player.playSound(
-                                        Sound.sound(
-                                                SoundEvent.ENTITY_EXPERIENCE_ORB_PICKUP,
-                                                Sound.Source.PLAYER,
-                                                1f,
-                                                1f
-                                        )
-                                );
-                                hit.playSound(
-                                        Sound.sound(
-                                                SoundEvent.ENTITY_GENERIC_HURT,
-                                                Sound.Source.PLAYER,
-                                                0.25f,
-                                                1f
-                                        )
-                                );
-                            })
-                            .delay(TaskSchedule.tick(3))
-                            .schedule();
-
-                    break;
-                } else {
-                    if (player.getInstance() != null) {
-                        player.getInstance().sendGroupedPacket(
-                                new ParticlePacket(Particle.CRIT, point.x(), point.y(), point.z(), 0f, 0f, 0f, 0f, 1)
-                        );
-                    }
+            if (event.getPlayer().getItemInMainHand().material() != Material.WOODEN_HOE) return;
+            Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25, instanceContainer, Particle.CRIT);
+            if (playerHit != null) {
+                playerHit.damage(DamageType.ARROW, 12f);
+                playerHit.heal();
+                HealthManagement.damage(playerHit, 25);
+                if (HealthManagement.getHealth(playerHit) <= 0) {
+                    HealthManagement.setKilledBy(playerHit, event.getPlayer());
+                    minegunLogger.info(playerHit.getUsername()  + " was killed by " + HealthManagement.getKilledBy(playerHit).getUsername() + " using a Rifle!");
+                    MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(person -> {
+                        person.sendMessage(Component.text(playerHit.getUsername() + " has been shot by " + HealthManagement.getKilledBy(playerHit).getUsername() + " using a Rifle!").color(NamedTextColor.YELLOW));
+                    });
                 }
-
-                i += 0.5;
             }
-
-            player.playSound(
-                    Sound.sound(SoundEvent.ENTITY_FIREWORK_ROCKET_BLAST, Sound.Source.PLAYER, 0.25f, 1f)
-            );
         });
     }
 }

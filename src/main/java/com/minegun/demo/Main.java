@@ -1,5 +1,7 @@
 package com.minegun.demo;
 
+import com.minegun.Events.PlayerLoadedEventHandler;
+import com.minegun.Events.PlayerTickEventHandler;
 import com.minegun.HealthManagement;
 import com.minegun.Weapons.Rifle;
 import com.minegun.Weapons.RocketLauncher;
@@ -58,16 +60,17 @@ public class Main {
         });
         minegunLogger.info("F3 + F4 Registered");
 
+        TestDummy.createDummy(instanceContainer);
+        minegunLogger.info("Dummy made!");
+
         //Health Stuff
-        HealthManagement healthManagement = new HealthManagement();
-        healthManagement.bossBarMaker(eventHandler);
-        minegunLogger.info("Boss Bar Maker registered!");
-        healthManagement.tickUpdate(eventHandler);
+
+        PlayerLoadedEventHandler.register(eventHandler);
+        minegunLogger.info("Player Loaded registered!");
+        PlayerTickEventHandler.register(eventHandler);
         minegunLogger.info("Tick Update registerd!");
 
         minecraftServer.start("0.0.0.0", 25565);
         minegunLogger.success("Minegun Demo Started!");
-
-        TestDummy.createDummy(instanceContainer); // Should spawn in a Zombie...
     }
 }
