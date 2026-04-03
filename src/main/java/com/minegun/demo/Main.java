@@ -2,11 +2,9 @@ package com.minegun.demo;
 
 import com.minegun.Events.PlayerLoadedEventHandler;
 import com.minegun.Events.PlayerTickEventHandler;
-import com.minegun.HealthManagement;
 import com.minegun.Weapons.Rifle;
 import com.minegun.Weapons.RocketLauncher;
 import com.minegun.minegunLogger;
-import com.minegun.demo.TestDummy;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -68,7 +66,7 @@ public class Main {
         PlayerLoadedEventHandler.register(eventHandler);
         minegunLogger.info("Player Loaded registered!");
         PlayerTickEventHandler.register(eventHandler);
-        minegunLogger.info("Tick Update registerd!");
+        minegunLogger.info("Tick Update registered!");
 
         minecraftServer.start("0.0.0.0", 25565);
         minegunLogger.success("Minegun Demo Started!");
