@@ -1,13 +1,13 @@
 package com.minegun.demo;
 
-import com.minegun.Rifle;
+import com.minegun.Weapons.Rifle;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandExecutor;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import com.minegun.RocketLauncher;
+import com.minegun.Weapons.RocketLauncher;
 import com.minegun.minegunLogger;
 
 public class giveCommand extends Command{
