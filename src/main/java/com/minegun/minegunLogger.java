@@ -41,16 +41,13 @@ public class minegunLogger {
     }
 
     public static void printBanner() {
-        System.out.println();
-        System.out.println(DARK_PURPLE + "  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  " + RESET);
-        System.out.println(DARK_PURPLE + "  █                                       █  " + RESET);
-        System.out.println(DARK_PURPLE + "  █  " + PURPLE + "  ██▄  ▄█ ▄█▄  ▄▄▄  ▄████ ██  ██▄  " + DARK_PURPLE + "█  " + RESET);
-        System.out.println(DARK_PURPLE + "  █  " + PURPLE + "  █ ██▄█ █ █  █  █  █     █ █  █ █  " + DARK_PURPLE + "█  " + RESET);
-        System.out.println(DARK_PURPLE + "  █  " + PURPLE + "  █ ▀█▀ █ █   █  █  █████ █ █  █ █  " + DARK_PURPLE + "█  " + RESET);
-        System.out.println(DARK_PURPLE + "  █  " + PURPLE + "  █  █  █ █   █  █  █     ████  █ █  " + DARK_PURPLE + "█  " + RESET);
-        System.out.println(DARK_PURPLE + "  █  " + PURPLE + "  █  █  █ ███  ▀▀▀  █     █  █ ███  " + DARK_PURPLE + "█  " + RESET);
-        System.out.println(DARK_PURPLE + "  █                                       █  " + RESET);
-        System.out.println(DARK_PURPLE + "  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  " + RESET);
-        System.out.println();
+        System.out.println("$$\\      $$\\ $$$$$$\\ $$\\   $$\\ $$$$$$$$\\  $$$$$$\\  $$\\   $$\\ $$\\   $$\\ ");
+        System.out.println("$$$\\   $$$ |\\_$$  _|$$$\\  $$ |$$  _____|$$  __$$\\ $$ |  $$ |$$$\\  $$ |");
+        System.out.println("$$$$\\ $$$$ |  $$ |  $$$$\\ $$ |$$ |      $$ /  \\__|$$ |  $$ |$$$$\\ $$ |");
+        System.out.println("$$\\$$\\$$ $$ |  $$ |  $$ $$\\$$ |$$$$$\\    $$ |$$$$\\ $$ |  $$ |$$ $$\\$$ |");
+        System.out.println("$$ \\$$$  $$ |  $$ |  $$ \\$$$$ |$$  __|   $$ |\\_$$ |$$ |  $$ |$$ \\$$$$ |");
+        System.out.println("$$ |\\_/  $$ |  $$ |  $$ |\\$$$ |$$ |      $$ |  $$ |$$ |  $$ |$$ |\\$$$ |");
+        System.out.println("$$ |     $$ |$$$$$$\\ $$ | \\$$ |$$$$$$$$\\ \\$$$$$$  |\\$$$$$$  |$$ | \\$$ |");
+        System.out.println("\\__|     \\__|\\______|\\__|  \\__|\\________| \\______/  \\______/ \\__|  \\__|");
     }
 }
