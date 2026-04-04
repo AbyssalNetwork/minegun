@@ -1,6 +1,6 @@
-package com.minegun.Events;
+package org.vardinsdev.minegun.Events;
 
-import com.minegun.HealthManagement;
+import org.vardinsdev.minegun.HealthManagement;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerTickEvent;
 

@@ -1,4 +1,4 @@
-package com.minegun.Weapons;
+package org.vardinsdev.minegun.Weapons;
 
 import net.kyori.adventure.sound.Sound;
 import net.minestom.server.MinecraftServer;

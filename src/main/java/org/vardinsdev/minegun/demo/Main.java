@@ -1,10 +1,10 @@
-package com.minegun.demo;
+package org.vardinsdev.minegun.demo;
 
-import com.minegun.Events.PlayerLoadedEventHandler;
-import com.minegun.Events.PlayerTickEventHandler;
-import com.minegun.Weapons.Rifle;
-import com.minegun.Weapons.RocketLauncher;
-import com.minegun.minegunLogger;
+import org.vardinsdev.minegun.Events.PlayerLoadedEventHandler;
+import org.vardinsdev.minegun.Events.PlayerTickEventHandler;
+import org.vardinsdev.minegun.Weapons.Rifle;
+import org.vardinsdev.minegun.Weapons.RocketLauncher;
+import org.vardinsdev.minegun.minegunLogger;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;

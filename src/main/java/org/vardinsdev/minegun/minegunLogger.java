@@ -1,4 +1,4 @@
-package com.minegun;
+package org.vardinsdev.minegun;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

@@ -1,4 +1,4 @@
-package com.minegun.demo;
+package org.vardinsdev.minegun.demo;
 
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.EntityCreature;

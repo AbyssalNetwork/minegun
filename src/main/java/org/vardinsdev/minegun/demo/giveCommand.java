@@ -1,12 +1,12 @@
-package com.minegun.demo;
+package org.vardinsdev.minegun.demo;
 
-import com.minegun.Weapons.Rifle;
+import org.vardinsdev.minegun.Weapons.Rifle;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 
-import com.minegun.Weapons.RocketLauncher;
-import com.minegun.minegunLogger;
+import org.vardinsdev.minegun.Weapons.RocketLauncher;
+import org.vardinsdev.minegun.minegunLogger;
 
 public class giveCommand extends Command{
 

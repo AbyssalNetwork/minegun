@@ -1,7 +1,7 @@
-package com.minegun.Weapons;
+package org.vardinsdev.minegun.Weapons;
 
-import com.minegun.HealthManagement;
-import com.minegun.minegunLogger;
+import org.vardinsdev.minegun.HealthManagement;
+import org.vardinsdev.minegun.minegunLogger;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.Player;
