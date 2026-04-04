@@ -5,6 +5,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
+import net.minestom.server.instance.ExplosionSupplier;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
@@ -15,7 +16,8 @@ import net.minestom.server.timer.TaskSchedule;
 import java.util.HashMap;
 import java.util.UUID;
 
-public interface RaycastWeapons {
+public interface RaycastWeapons extends ExplosionSupplier {
+
     static Player isPlayerAtPosition(InstanceContainer instance, Pos targetPos, Player shooter) {
         for (Player player : instance.getPlayers()) {
             if (player == shooter) continue;
@@ -33,8 +35,8 @@ public interface RaycastWeapons {
 
     HashMap<UUID, Long> lastShotTime = new HashMap<>();
 
-    //@Returns true if someone was hit
-    static Player shoot(Player player, long cooldownMs, InstanceContainer instanceContainer, Particle particle) {
+    ///Returns null if nobody was hit, if so returns the player that was hit
+    static Player shoot(Player player, long cooldownMs, InstanceContainer instanceContainer, Particle particle, Boolean explosion) {
 
         long now = System.currentTimeMillis();
         long last = (lastShotTime.get(player.getUuid()) == null) ? 0 : lastShotTime.get(player.getUuid());
@@ -58,6 +60,7 @@ public interface RaycastWeapons {
             Player hit = RaycastWeapons.isPlayerAtPosition(instanceContainer, exactPos, player);
 
             if (instanceContainer.getBlock(blockPos) != Block.AIR) {
+                if (explosion) {instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 1f); }
                 break;
             } else if (hit != player) {
                 hit.playSound(
@@ -68,6 +71,7 @@ public interface RaycastWeapons {
                                 1f
                         )
                 );
+                if (explosion) { instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 1f); }
 
                 playerHit = hit;
 

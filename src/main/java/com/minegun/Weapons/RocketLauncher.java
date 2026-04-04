@@ -18,8 +18,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.List;
 
-public class RocketLauncher implements RaycastWeapons, HealthManagement {
-    public static void givePlayer(Player player){
+public interface RocketLauncher extends RaycastWeapons, HealthManagement {
+    static void givePlayer(Player player){
         ItemStack item = ItemStack.builder(Material.WOODEN_AXE)
                 .set(DataComponents.CUSTOM_NAME, Component.text("Rocket Launcher", NamedTextColor.YELLOW))
                 .set(DataComponents.LORE, List.of(Component.text("Custom Made Weapon"), Component.text("By: VardinsDev")))
@@ -28,10 +28,10 @@ public class RocketLauncher implements RaycastWeapons, HealthManagement {
         minegunLogger.success(player.getUsername() + " has been given a Rocket Launcher!");
     }
 
-    public static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
+   static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
             if (event.getPlayer().getItemInMainHand().material() != Material.WOODEN_AXE) return;
-            Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25L, instanceContainer, Particle.FLAME);
+            Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25L, instanceContainer, Particle.FLAME, false);
 
             if (playerHit != null) {
                 playerHit.damage(DamageType.ARROW, 12f);
