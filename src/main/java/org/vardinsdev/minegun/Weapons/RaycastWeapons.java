@@ -8,12 +8,15 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.ExplosionSupplier;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.network.packet.server.play.ExplosionPacket;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
+import net.minestom.server.utils.WeightedList;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public interface RaycastWeapons extends ExplosionSupplier {
@@ -26,8 +29,8 @@ public interface RaycastWeapons extends ExplosionSupplier {
             double y = 0.0;
             while (y <= height) {
                 Pos checkPos = feetPos.add(0.0, y, 0.0);
-            if (targetPos.distanceSquared(checkPos) <= 0.5 * 0.5) return player;
-            y += 0.3;
+                if (targetPos.distanceSquared(checkPos) <= 0.5 * 0.5) return player;
+                y += 0.3;
             }
         }
         return shooter;
@@ -35,7 +38,7 @@ public interface RaycastWeapons extends ExplosionSupplier {
 
     HashMap<UUID, Long> lastShotTime = new HashMap<>();
 
-    ///Returns null if nobody was hit, if so returns the player that was hit
+    /// Returns null if nobody was hit, otherwise returns the player that was hit
     static Player shoot(Player player, long cooldownMs, InstanceContainer instanceContainer, Particle particle, Boolean explosion) {
 
         long now = System.currentTimeMillis();
@@ -59,10 +62,32 @@ public interface RaycastWeapons extends ExplosionSupplier {
 
             Player hit = RaycastWeapons.isPlayerAtPosition(instanceContainer, exactPos, player);
 
-            if (instanceContainer.getBlock(blockPos) != Block.AIR) {
-                if (explosion) {instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 1f); }
+            if (!instanceContainer.getBlock(blockPos).isAir()) {
+                if (explosion) {
+                    instanceContainer.sendGroupedPacket(new ExplosionPacket(
+                            exactPos,
+                            3.5f,
+                            0,
+                            Vec.ZERO,
+                            Particle.EXPLOSION,
+                            SoundEvent.ENTITY_GENERIC_EXPLODE,
+                            new WeightedList<>(List.of())
+                    ));
+                }
                 break;
             } else if (hit != player) {
+                if (explosion) {
+                    instanceContainer.sendGroupedPacket(new ExplosionPacket(
+                            exactPos,
+                            3.5f,
+                            0,
+                            Vec.ZERO,
+                            Particle.EXPLOSION,
+                            SoundEvent.ENTITY_GENERIC_EXPLODE,
+                            new WeightedList<>(List.of())
+                    ));
+                }
+
                 hit.playSound(
                         Sound.sound(
                                 SoundEvent.ENTITY_FIREWORK_ROCKET_BLAST,
@@ -71,7 +96,6 @@ public interface RaycastWeapons extends ExplosionSupplier {
                                 1f
                         )
                 );
-                if (explosion) { instanceContainer.explode((float) point.x(), (float) point.y(), (float) point.z(), 1f); }
 
                 playerHit = hit;
 
