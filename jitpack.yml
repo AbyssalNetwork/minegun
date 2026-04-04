@@ -1,0 +1,10 @@
+jdk:
+  - openjdk25
+
+before_install:
+  - sdk install java 25-open
+  - sdk use java 25-open
+
+# This tells JitPack exactly how to "install" your jar into its temp storage
+install:
+  - ./gradlew publishToMavenLocal -Pgroup=$GROUP -Pversion=$VERSION
