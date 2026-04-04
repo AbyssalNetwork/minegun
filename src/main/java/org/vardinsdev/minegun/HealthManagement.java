@@ -76,9 +76,10 @@ public interface HealthManagement {
         double overShield;
 
         if (shield < hitDamage) {
-            shield = 0;
             overShield = shield - hitDamage;
+            System.out.println(overShield);
             health += overShield;
+            shield = 0;
         } else if (shield == hitDamage) {
             shield = 0;
         } else {

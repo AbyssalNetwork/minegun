@@ -32,12 +32,12 @@ public interface RocketLauncher extends RaycastWeapons, HealthManagement {
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
             if (event.getPlayer().getItemInMainHand().material() != Material.WOODEN_AXE) return;
-            Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25L, instanceContainer, Particle.FLAME, true);
+            Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 3000L, instanceContainer, Particle.FLAME, true);
 
             if (playerHit != null) {
                 playerHit.damage(DamageType.ARROW, 12f);
                 playerHit.heal();
-                HealthManagement.damage(playerHit, 25);
+                HealthManagement.damage(playerHit, 105);
                 if (HealthManagement.getHealth(playerHit) <= 0) {
                     HealthManagement.setKilledBy(playerHit, event.getPlayer());
                     minegunLogger.info(playerHit.getUsername()  + " was killed by " + HealthManagement.getKilledBy(playerHit).getUsername() + " using a Rocket Launcher!");
