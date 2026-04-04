@@ -3,7 +3,6 @@ package org.vardinsdev.minegun.demo;
 import org.vardinsdev.minegun.HealthManagement;
 import org.vardinsdev.minegun.Weapons.Rifle;
 import org.vardinsdev.minegun.Weapons.RocketLauncher;
-import org.vardinsdev.minegun.minegunLogger;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -14,10 +13,11 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
+import org.vardinsdev.minegun.minegunLogger;
 
 // This is how you make a comment you idiot.
 public class Main {
-    static void main() {
+    static void main(String[] args) {
         minegunLogger.printBanner();
         MinecraftServer minecraftServer = MinecraftServer.init(new Auth.Online());
         minegunLogger.info("Server Initiated!");
