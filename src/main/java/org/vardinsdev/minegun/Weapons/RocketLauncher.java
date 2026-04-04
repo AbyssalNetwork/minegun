@@ -28,7 +28,8 @@ public interface RocketLauncher extends RaycastWeapons, HealthManagement {
         minegunLogger.success(player.getUsername() + " has been given a Rocket Launcher!");
     }
 
-   static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
+   static void register(InstanceContainer instanceContainer) {
+        GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
             if (event.getPlayer().getItemInMainHand().material() != Material.WOODEN_AXE) return;
             Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25L, instanceContainer, Particle.FLAME, false);

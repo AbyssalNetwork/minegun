@@ -34,10 +34,10 @@ public class Main {
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
 
-        Rifle.register(eventHandler, instanceContainer);
+        Rifle.register(instanceContainer);
         minegunLogger.info("Rifle event loaded!");
 
-        RocketLauncher.register(eventHandler, instanceContainer);
+        RocketLauncher.register(instanceContainer);
 
         MinecraftServer.getCommandManager().register(new giveCommand());
         minegunLogger.info("Give Command registered!");
@@ -63,9 +63,9 @@ public class Main {
 
         //Health Stuff
 
-        PlayerLoadedEventHandler.register(eventHandler);
+        PlayerLoadedEventHandler.register();
         minegunLogger.info("Player Loaded registered!");
-        PlayerTickEventHandler.register(eventHandler);
+        PlayerTickEventHandler.register();
         minegunLogger.info("Tick Update registered!");
 
         minecraftServer.start("0.0.0.0", 25565);

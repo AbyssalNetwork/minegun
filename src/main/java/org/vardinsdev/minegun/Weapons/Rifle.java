@@ -28,7 +28,8 @@ public interface Rifle extends RaycastWeapons, HealthManagement {
         minegunLogger.success(player.getUsername() + " has been given a Rifle!");
     }
 
-    static void register(GlobalEventHandler eventHandler, InstanceContainer instanceContainer) {
+    static void register(InstanceContainer instanceContainer) {
+        GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerUseItemEvent.class, event -> {
             if (event.getPlayer().getItemInMainHand().material() != Material.WOODEN_HOE) return;
             Player playerHit = RaycastWeapons.shoot(event.getPlayer(), 25L, instanceContainer, Particle.CRIT, false);

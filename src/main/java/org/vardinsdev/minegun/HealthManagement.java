@@ -4,11 +4,16 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.adventure.bossbar.BossBarManager;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.player.PlayerLoadedEvent;
+import net.minestom.server.event.player.PlayerTickEvent;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.tag.Tag;
+import org.vardinsdev.minegun.Events.PlayerLoadedEventHandler;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -27,33 +32,38 @@ public interface HealthManagement {
     Tag<Double> healthTag = Tag.Double("health");
     Tag<Double> shieldTag = Tag.Double("shield");
 
-    static void bossBarMaker(Player player) {
-        BossBar healthBar;
-        BossBar shieldBar;
-        healthBar = BossBar.bossBar(
-                Component.text("Health"),
-                1f,
-                BossBar.Color.GREEN,
-                BossBar.Overlay.PROGRESS
-        );
+    static void bossBarMaker() {
 
-        shieldBar = BossBar.bossBar(
-                Component.text("Shield"),
-                1f,
-                BossBar.Color.BLUE,
-                BossBar.Overlay.PROGRESS
-        );
+        GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
+        eventHandler.addListener(PlayerLoadedEvent.class, event -> {
+            Player player = event.getPlayer();
+            BossBar healthBar;
+            BossBar shieldBar;
+            healthBar = BossBar.bossBar(
+                    Component.text("Health"),
+                    1f,
+                    BossBar.Color.GREEN,
+                    BossBar.Overlay.PROGRESS
+            );
 
-        bossBarManager.addBossBar(player, healthBar);
-        bossBarManager.addBossBar(player, shieldBar);
+            shieldBar = BossBar.bossBar(
+                    Component.text("Shield"),
+                    1f,
+                    BossBar.Color.BLUE,
+                    BossBar.Overlay.PROGRESS
+            );
 
-        healthBars.put(player.getUuid(), healthBar);
-        shieldBars.put(player.getUuid(), shieldBar);
+            bossBarManager.addBossBar(player, healthBar);
+            bossBarManager.addBossBar(player, shieldBar);
 
-        player.setTag(healthTag, 100.0);
-        player.setTag(shieldTag, 100.0);
+            healthBars.put(player.getUuid(), healthBar);
+            shieldBars.put(player.getUuid(), shieldBar);
 
-        isLoaded.put(player.getUuid(), true);
+            player.setTag(healthTag, 100.0);
+            player.setTag(shieldTag, 100.0);
+
+            isLoaded.put(player.getUuid(), true);
+        });
     }
     static void damage(Player player, double hitDamage) {
         double shield = getShield(player);
@@ -74,41 +84,45 @@ public interface HealthManagement {
         player.setTag(shieldTag, shield);
     }
 
-    static void tickUpdate(Player player) {
-        if (isLoaded.get(player.getUuid()) == null) {
-            return;
-        }
-        if (!isLoaded.get(player.getUuid())) {
-            return;
-        }
-        BossBar playerHealthBar = healthBars.get(player.getUuid());
-        BossBar playerShieldBar = shieldBars.get(player.getUuid());
+    static void tickUpdate() {
+        GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
+        eventHandler.addListener(PlayerTickEvent.class, event -> {
+            Player player = event.getPlayer();
+            if (isLoaded.get(player.getUuid()) == null) {
+                return;
+            }
+            if (!isLoaded.get(player.getUuid())) {
+                return;
+            }
+            BossBar playerHealthBar = healthBars.get(player.getUuid());
+            BossBar playerShieldBar = shieldBars.get(player.getUuid());
 
-        double shield;
-        double health = getHealth(player);
+            double shield;
+            double health = getHealth(player);
 
-        if (health <= 0) {
-            player.teleport(player.getRespawnPoint());
-            player.showTitle(
-                    Title.title(
-                            Component.text("You DIED").color(NamedTextColor.RED),
-                            Component.text(""),
-                            Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
-                    )
-            );
-            player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
-            health = 100;
-            shield = 100;
-            player.setTag(healthTag, health);
-            player.setTag(shieldTag, shield);
-        }
+            if (health <= 0) {
+                player.teleport(player.getRespawnPoint());
+                player.showTitle(
+                        Title.title(
+                                Component.text("You DIED").color(NamedTextColor.RED),
+                                Component.text(""),
+                                Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
+                        )
+                );
+                player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
+                health = 100;
+                shield = 100;
+                player.setTag(healthTag, health);
+                player.setTag(shieldTag, shield);
+            }
 
-        if (playerHealthBar == null) {
-            return;
-        }
+            if (playerHealthBar == null) {
+                return;
+            }
 
-        playerHealthBar.progress((float) (player.getTag(healthTag) / 100));
-        playerShieldBar.progress((float) (player.getTag(shieldTag) / 100));
+            playerHealthBar.progress((float) (player.getTag(healthTag) / 100));
+            playerShieldBar.progress((float) (player.getTag(shieldTag) / 100));
+        });
     }
 
     static double getHealth(Player player) {
