@@ -1,7 +1,6 @@
 package org.vardinsdev.minegun.demo;
 
-import org.vardinsdev.minegun.Events.PlayerLoadedEventHandler;
-import org.vardinsdev.minegun.Events.PlayerTickEventHandler;
+import org.vardinsdev.minegun.HealthManagement;
 import org.vardinsdev.minegun.Weapons.Rifle;
 import org.vardinsdev.minegun.Weapons.RocketLauncher;
 import org.vardinsdev.minegun.minegunLogger;
@@ -63,10 +62,8 @@ public class Main {
 
         //Health Stuff
 
-        PlayerLoadedEventHandler.register();
-        minegunLogger.info("Player Loaded registered!");
-        PlayerTickEventHandler.register();
-        minegunLogger.info("Tick Update registered!");
+        HealthManagement.register();
+        minegunLogger.info("Health Events Registerd");
 
         minecraftServer.start("0.0.0.0", 25565);
         minegunLogger.success("Minegun Demo Started!");

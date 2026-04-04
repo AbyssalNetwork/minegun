@@ -13,7 +13,6 @@ import net.minestom.server.event.player.PlayerTickEvent;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.tag.Tag;
-import org.vardinsdev.minegun.Events.PlayerLoadedEventHandler;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -31,6 +30,12 @@ public interface HealthManagement {
 
     Tag<Double> healthTag = Tag.Double("health");
     Tag<Double> shieldTag = Tag.Double("shield");
+
+    static void register() {
+        //Registers the events
+        bossBarMaker();
+        tickUpdate();
+    }
 
     static void bossBarMaker() {
 
@@ -88,40 +93,37 @@ public interface HealthManagement {
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(PlayerTickEvent.class, event -> {
             Player player = event.getPlayer();
-            if (isLoaded.get(player.getUuid()) == null) {
-                return;
-            }
-            if (!isLoaded.get(player.getUuid())) {
-                return;
-            }
-            BossBar playerHealthBar = healthBars.get(player.getUuid());
-            BossBar playerShieldBar = shieldBars.get(player.getUuid());
+            if (isLoaded.get(player.getUuid()) == null) { return; }
+            if (isLoaded.get(player.getUuid())) {
+                BossBar playerHealthBar = healthBars.get(player.getUuid());
+                BossBar playerShieldBar = shieldBars.get(player.getUuid());
 
-            double shield;
-            double health = getHealth(player);
+                double shield;
+                double health = getHealth(player);
 
-            if (health <= 0) {
-                player.teleport(player.getRespawnPoint());
-                player.showTitle(
-                        Title.title(
-                                Component.text("You DIED").color(NamedTextColor.RED),
-                                Component.text(""),
-                                Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
-                        )
-                );
-                player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
-                health = 100;
-                shield = 100;
-                player.setTag(healthTag, health);
-                player.setTag(shieldTag, shield);
+                if (health <= 0) {
+                    player.teleport(player.getRespawnPoint());
+                    player.showTitle(
+                            Title.title(
+                                    Component.text("You DIED").color(NamedTextColor.RED),
+                                    Component.text(""),
+                                    Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(3), Duration.ofMillis(500))
+                            )
+                    );
+                    player.addEffect(new Potion(PotionEffect.BLINDNESS, 1, 100));
+                    health = 100;
+                    shield = 100;
+                    player.setTag(healthTag, health);
+                    player.setTag(shieldTag, shield);
+                }
+
+                if (playerHealthBar == null) {
+                    return;
+                }
+
+                playerHealthBar.progress((float) (player.getTag(healthTag) / 100));
+                playerShieldBar.progress((float) (player.getTag(shieldTag) / 100));
             }
-
-            if (playerHealthBar == null) {
-                return;
-            }
-
-            playerHealthBar.progress((float) (player.getTag(healthTag) / 100));
-            playerShieldBar.progress((float) (player.getTag(shieldTag) / 100));
         });
     }
 
