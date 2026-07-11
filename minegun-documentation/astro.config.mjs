@@ -7,7 +7,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
     integrations: [
         starlight({
-            title: 'My Docs',
+            title: 'Minegun',
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
             sidebar: [
                 {
