@@ -13,14 +13,14 @@ export default defineConfig({
                 {
                     label: 'Guides',
                     items: [
-                        // Each item here is one entry in the navigation menu.
                         { label: 'Getting Started', slug: 'guides/gettingstarted'},
-                        { label: 'Raycast Weapons', slug: 'classes/raycastweapons'},
                     ],
                 },
                 {
-                    label: 'Reference',
-                    items: [{ autogenerate: { directory: 'reference' } }],
+                    label: 'Classes',
+                    items: [
+                        { label: 'Raycast Weapons', slug: 'classes/raycastweapons'},
+                    ],
                 },
             ],
         }),
