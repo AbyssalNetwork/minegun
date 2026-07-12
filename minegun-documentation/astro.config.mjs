@@ -26,7 +26,10 @@ export default defineConfig({
         }),
     ],
 
-    adapter: cloudflare(),
+    // Configure Cloudflare to process images locally during build time
+    adapter: cloudflare({
+        imageService: 'compile',
+    }),
 
     // Add this Vite block to bypass the SSR path resolution bug
     vite: {
